@@ -24,6 +24,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-rbs}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-rbs}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-rbs}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:example-secret-key}
+      APP_JWT_EXPIRATION: ${APP_JWT_EXPIRATION:-3600000}
     depends_on:
       db:
         condition: service_healthy
