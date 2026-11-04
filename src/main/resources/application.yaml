@@ -1,3 +1,25 @@
 spring:
   application:
     name: rbs
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/rbs}
+    username: ${SPRING_DATASOURCE_USERNAME:rbs}
+    password: ${SPRING_DATASOURCE_PASSWORD:rbs}
+    hikari:
+      data-source-properties:
+        stringtype: unspecified
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 32
+
+server:
+  port: 8080
