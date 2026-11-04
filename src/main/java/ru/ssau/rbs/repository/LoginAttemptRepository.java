@@ -11,6 +11,7 @@ import ru.ssau.rbs.domain.entity.LoginAttempt;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long> {
 
@@ -22,4 +23,10 @@ public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long
     @Modifying
     @Query("delete from LoginAttempt l where l.createdAt < :threshold")
     int deleteOlderThan(@Param("threshold") Instant threshold);
+
+    @Transactional
+    long deleteByEmailAndIp(String email, InetAddress ip);
+
+    Optional<LoginAttempt> findFirstByEmailAndIpOrderByCreatedAtAsc(String email, InetAddress ip);
+
 }

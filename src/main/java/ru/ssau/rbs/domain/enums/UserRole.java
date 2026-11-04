@@ -1,5 +1,7 @@
 package ru.ssau.rbs.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum UserRole {
 
     EMPLOYEE("employee"),
@@ -12,6 +14,7 @@ public enum UserRole {
         this.code = code;
     }
 
+    @JsonValue
     public String getCode() {
         return code;
     }
