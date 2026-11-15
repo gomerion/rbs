@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ssau.rbs.domain.entity.ResourceWorkingHour;
 import ru.ssau.rbs.domain.entity.ResourceWorkingHourId;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ResourceWorkingHourRepository extends JpaRepository<ResourceWorkingHour, ResourceWorkingHourId> {
@@ -34,6 +35,13 @@ public interface ResourceWorkingHourRepository extends JpaRepository<ResourceWor
             """)
     List<ResourceWorkingHour> findAllByResourceIdAndWeekdayIn(@Param("resourceId") Long resourceId,
                                                              @Param("weekdays") List<Short> weekdays);
+
+    @Query("""
+            select w from ResourceWorkingHour w
+            where w.id.resourceId in :resourceIds
+            order by w.id.resourceId, w.id.weekday, w.id.startTime
+            """)
+    List<ResourceWorkingHour> findAllByResourceIds(@Param("resourceIds") Collection<Long> resourceIds);
 
     @Transactional
     @Modifying
