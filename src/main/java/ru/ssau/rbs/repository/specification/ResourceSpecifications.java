@@ -5,6 +5,7 @@ import ru.ssau.rbs.domain.entity.Resource;
 import ru.ssau.rbs.domain.enums.ResourceStatus;
 import ru.ssau.rbs.domain.enums.ResourceType;
 
+import java.util.Collection;
 import java.util.Locale;
 
 public final class ResourceSpecifications {
@@ -27,5 +28,12 @@ public final class ResourceSpecifications {
     public static Specification<Resource> locationContains(String location) {
         String pattern = "%" + location.trim().toLowerCase(Locale.ROOT) + "%";
         return (root, query, cb) -> cb.like(cb.lower(root.get("location")), pattern);
+    }
+
+    public static Specification<Resource> idIn(Collection<Long> ids) {
+        if (ids.isEmpty()) {
+            return (root, query, cb) -> cb.disjunction();
+        }
+        return (root, query, cb) -> root.get("id").in(ids);
     }
 }

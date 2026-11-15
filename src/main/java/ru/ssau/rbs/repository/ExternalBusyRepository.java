@@ -33,5 +33,16 @@ public interface ExternalBusyRepository extends JpaRepository<ExternalBusy, Long
         return countOverlapping(resourceId, startsAt, endsAt) > 0;
     }
 
+    @Query("""
+            select e from ExternalBusy e
+            where e.resource.id = :resourceId
+              and e.startsAt < :to
+              and e.endsAt > :from
+            order by e.startsAt
+            """)
+    List<ExternalBusy> findOverlapping(@Param("resourceId") Long resourceId,
+                                       @Param("from") Instant from,
+                                       @Param("to") Instant to);
+
     void deleteAllByResourceId(Long resourceId);
 }

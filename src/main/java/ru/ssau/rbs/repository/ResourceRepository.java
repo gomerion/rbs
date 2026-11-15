@@ -52,4 +52,10 @@ public interface ResourceRepository extends JpaRepository<Resource, Long>, JpaSp
             order by r.name
             """, nativeQuery = true)
     List<Resource> findAllByFeatures(@Param("status") String status, @Param("features") String[] features);
+
+    @Query(value = """
+            select r.id from resources r
+            where r.features @> cast(:features as text[])
+            """, nativeQuery = true)
+    List<Long> findIdsByAllFeatures(@Param("features") String[] features);
 }
