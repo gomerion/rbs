@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import ru.ssau.rbs.domain.entity.User;
 import ru.ssau.rbs.domain.enums.UserRole;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :id")
     Optional<User> findByIdForUpdate(@Param("id") Long id);
+
+    @Query("select u.department.id from User u where u.id = :id")
+    Optional<Long> findDepartmentIdById(@Param("id") Long id);
+
+    @Query("select u.id, u.department.id from User u where u.id in :ids")
+    List<Object[]> findDepartmentIds(@Param("ids") Collection<Long> ids);
 }

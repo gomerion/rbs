@@ -28,3 +28,12 @@ app:
   jwt:
     secret: ${APP_JWT_SECRET:example-secret-key}
     expiration: ${APP_JWT_EXPIRATION:3600000}
+  booking:
+    grid-minutes: ${APP_BOOKING_GRID_MINUTES:15}
+    min-duration-minutes: ${APP_BOOKING_MIN_DURATION_MINUTES:15}
+    max-duration-minutes: ${APP_BOOKING_MAX_DURATION_MINUTES:180}
+    advance-days: ${APP_BOOKING_ADVANCE_DAYS:30}
+    max-active-employee: ${APP_BOOKING_MAX_ACTIVE_EMPLOYEE:5}
+    max-active-manager: ${APP_BOOKING_MAX_ACTIVE_MANAGER:10}
+    cancel-hours-employee: ${APP_BOOKING_CANCEL_HOURS_EMPLOYEE:2}
+    series-max: ${APP_BOOKING_SERIES_MAX:8}

@@ -24,7 +24,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-rbs}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-rbs}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-rbs}
-      APP_JWT_SECRET: ${APP_JWT_SECRET:example-secret-key}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-cmJzLWRldi1vbmx5LWp3dC1zZWNyZXQtY2hhbmdlLW1lLTMyYg==}
       APP_JWT_EXPIRATION: ${APP_JWT_EXPIRATION:-3600000}
     depends_on:
       db:
@@ -34,7 +34,7 @@ services:
 
   frontend:
     image: ${FRONTEND_IMAGE:-ghcr.io/gomerion/rbs-front:0.1.0}
-    # build: ../rbs-front
+    build: ../rbs-front
     depends_on:
       - backend
     ports:

@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class ResourceService {
     private final ResourceRepository resourceRepository;
     private final ResourceWorkingHourRepository workingHourRepository;
     private final AvailabilityCalculator availabilityCalculator;
+    private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public PageResponse<ResourceResponse> search(String type,
@@ -129,12 +131,14 @@ public class ResourceService {
 
         Resource saved = resourceRepository.saveAndFlush(resource);
         saveWorkingHours(saved, validateWorkingHours(request.getWorkingHours()));
+        auditService.recordCurrent("resource.create", "resource", saved.getId(), null, resourceState(saved));
         return toResponse(saved, workingHourRepository.findAllByResourceId(saved.getId()));
     }
 
     @Transactional
     public ResourceResponse update(Long id, ResourcePatchRequest request) {
         Resource resource = findResource(id);
+        Map<String, Object> before = resourceState(resource);
         if (request.getCode() != null) {
             String code = requireText(request.getCode(), "code");
             if (!code.equals(resource.getCode()) && resourceRepository.existsByCode(code)) {
@@ -183,14 +187,17 @@ public class ResourceService {
             workingHourRepository.deleteAllByResourceId(id);
             saveWorkingHours(saved, validateWorkingHours(request.getWorkingHours()));
         }
+        auditService.recordCurrent("resource.update", "resource", saved.getId(), before, resourceState(saved));
         return toResponse(saved, workingHourRepository.findAllByResourceId(saved.getId()));
     }
 
     @Transactional
     public ResourceResponse archive(Long id) {
         Resource resource = findResource(id);
+        Map<String, Object> before = resourceState(resource);
         resource.archive();
         Resource saved = resourceRepository.saveAndFlush(resource);
+        auditService.recordCurrent("resource.archive", "resource", saved.getId(), before, resourceState(saved));
         return toResponse(saved, workingHourRepository.findAllByResourceId(saved.getId()));
     }
 
@@ -277,6 +284,18 @@ public class ResourceService {
                 resource.getCalendarCode(),
                 resource.getStatus().getCode(),
                 workingHours);
+    }
+
+    private static Map<String, Object> resourceState(Resource resource) {
+        Map<String, Object> state = new LinkedHashMap<>();
+        state.put("code", resource.getCode());
+        state.put("name", resource.getName());
+        state.put("type", resource.getType().getCode());
+        state.put("capacity", resource.getCapacity());
+        state.put("location", resource.getLocation());
+        state.put("timezone", resource.getTimeZone());
+        state.put("status", resource.getStatus().getCode());
+        return state;
     }
 
     private static String requireText(String value, String field) {

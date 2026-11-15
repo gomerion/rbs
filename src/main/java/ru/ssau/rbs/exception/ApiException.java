@@ -43,6 +43,14 @@ public class ApiException extends RuntimeException {
         return new ApiException(HttpStatus.CONFLICT, "conflict", detail);
     }
 
+    public static ApiException badRequest(String code, String detail) {
+        return new ApiException(HttpStatus.BAD_REQUEST, code, detail);
+    }
+
+    public static ApiException conflict(String code, String detail) {
+        return new ApiException(HttpStatus.CONFLICT, code, detail);
+    }
+
     public static ApiException emailTaken(String email) {
         return new ApiException(HttpStatus.CONFLICT, "email_taken", "Email уже зарегистрирован: " + email);
     }
